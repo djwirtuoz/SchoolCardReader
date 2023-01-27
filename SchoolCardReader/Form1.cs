@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Drawing;
 
 namespace SchoolCardReader
 {
@@ -50,7 +51,8 @@ namespace SchoolCardReader
                 // Проверяем есть ли доступные
                 if (portnames.Length == 0)
                 {
-                    MessageBox.Show("COM PORT not found");
+                    label5.Text = "Устройство не найдено";
+                    btn1.Enabled = false;
                 }
                 foreach (string portName in portnames)
                 {
@@ -63,6 +65,7 @@ namespace SchoolCardReader
                     }
                 }
                 btn1.Enabled = true;
+                label5.Text = "Устройство найдено";
 
                 string selectedPort = port_comboBox.GetItemText(port_comboBox.SelectedItem);
                 port.PortName = selectedPort;
@@ -113,6 +116,19 @@ namespace SchoolCardReader
             char[] arr = s.ToCharArray();
             Array.Reverse(arr);
             return new string(arr);
+        }
+
+        private void label5_TextChanged(object sender, EventArgs e)
+        {
+            if(label5.Text == "Поднесите карту")
+            {
+                label5.ForeColor = Color.Green;
+            }
+
+            if (label5.Text == "Считывание остановлено")
+            {
+                label5.ForeColor = Color.Red;
+            }
         }
     }
 }

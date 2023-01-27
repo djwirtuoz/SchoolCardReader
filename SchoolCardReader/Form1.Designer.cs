@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
             this.btn1 = new System.Windows.Forms.Button();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.fam_textB = new System.Windows.Forms.TextBox();
@@ -40,14 +39,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(312, 113);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 0;
             // 
             // btn1
             // 
@@ -94,15 +85,15 @@
             // port_comboBox
             // 
             this.port_comboBox.FormattingEnabled = true;
-            this.port_comboBox.Location = new System.Drawing.Point(265, 31);
+            this.port_comboBox.Location = new System.Drawing.Point(239, 30);
             this.port_comboBox.Name = "port_comboBox";
-            this.port_comboBox.Size = new System.Drawing.Size(121, 21);
+            this.port_comboBox.Size = new System.Drawing.Size(147, 21);
             this.port_comboBox.TabIndex = 7;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(262, 9);
+            this.label4.Location = new System.Drawing.Point(236, 9);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(32, 13);
             this.label4.TabIndex = 8;
@@ -110,11 +101,12 @@
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(262, 81);
+            this.label5.Location = new System.Drawing.Point(236, 71);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(0, 13);
+            this.label5.Size = new System.Drawing.Size(150, 23);
             this.label5.TabIndex = 9;
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label5.TextChanged += new System.EventHandler(this.label5_TextChanged);
             // 
             // Form1
             // 
@@ -129,7 +121,6 @@
             this.Controls.Add(this.num_textB);
             this.Controls.Add(this.fam_textB);
             this.Controls.Add(this.btn1);
-            this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Form1";
@@ -142,8 +133,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btn1;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.TextBox fam_textB;
