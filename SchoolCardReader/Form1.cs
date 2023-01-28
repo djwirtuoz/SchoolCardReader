@@ -9,11 +9,11 @@ namespace SchoolCardReader
     public partial class Form1 : Form
     {
         SerialPort port = new SerialPort();
+        string selectedPort;
         bool isConnected = false;
         string all_num; //HEX all numm
         string family;  //family numm DEC
         string number;  //number numm DEC
-        string verify_reader;
         public Form1()
         {
             InitializeComponent();
@@ -27,7 +27,12 @@ namespace SchoolCardReader
                 (ThreadStart)delegate ()
                 {
                     all_num = port.ReadExisting();
-                    ConvertData();
+                    Thread.Sleep(100);
+                    if (all_num != "reader")
+                    {
+                        Thread.Sleep(100);
+                        ConvertData();
+                    }
                 });
         }
 
@@ -54,40 +59,26 @@ namespace SchoolCardReader
                 {
                     label5.Text = "Устройство не найдено";
                     btn1.Enabled = false;
-                    timer1.Enabled = true;
                 }
                 else
                 {
-                    for (int x = 0; x == portnames.Length; x++)
+                    for (int x = 0; x < portnames.Length; x++)
                     {
                         //добавляем доступные COM порты в список           
                         port_comboBox.Items.Add(portnames[x]);
+                        port_comboBox.SelectedItem = portnames[x];
+                        selectedPort = port_comboBox.GetItemText(port_comboBox.SelectedItem);
+                        port.PortName = selectedPort;
+                        port.BaudRate = 115200;
+
                         if (portnames[x] != null)
                         {
-                            port.Open();
-                            port.Write("reader");    //пишем в порт данные для проверки на правильность считыателя
-
-                            fam_textB.Invoke(
-                                (ThreadStart)delegate ()
-                                {
-                                    verify_reader = port.ReadExisting();
-                                });
-
-                            if (verify_reader == "reader")
-                            {
-                                port_comboBox.SelectedItem = portnames[x];
-                                label5.Text = "Устройство готово";
-                                btn1.Enabled = true;
-                                timer1.Enabled = false;
-                            }
-                            port.Close();
+                            btn1.Enabled = true;
+                            port_comboBox.SelectedItem = portnames[x];
+                            label5.Text = "Выберите порт";
                         }
                     }
                 }
-
-                string selectedPort = port_comboBox.GetItemText(port_comboBox.SelectedItem);
-                port.PortName = selectedPort;
-                port.BaudRate = 115200;
             }
             catch { }
         }
@@ -147,11 +138,6 @@ namespace SchoolCardReader
             {
                 label5.ForeColor = Color.Red;
             }
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            Search_dev();
         }
     }
 }
