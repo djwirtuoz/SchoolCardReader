@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using System.Threading;
 using System.Drawing;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SchoolCardReader
 {
@@ -23,22 +24,35 @@ namespace SchoolCardReader
 
         private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            fam_textB.Invoke(
-                (ThreadStart)delegate ()
+            bool _continue = true;
+            if (port.IsOpen)
+            {
+                while (_continue)
                 {
-                    all_num = port.ReadExisting();
-                    Thread.Sleep(100);
-                    if (all_num != "reader")
+                    try
                     {
-                        Thread.Sleep(100);
+                        string message = port.ReadLine();
+                        all_num = message;
+                    }
+                    catch (TimeoutException) { }
+                    finally
+                    {
+                        _continue = false;
                         ConvertData();
                     }
-                });
+                }
+            }
+            port.Close();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            port.Close();
+            if (port.IsOpen)
+            {
+                e.Cancel = true; //cancel the fom closing
+                Thread CloseDown = new Thread(new ThreadStart(CloseSerialOnExit)); //close port in new thread to avoid hang
+                CloseDown.Start(); //close port in new thread to avoid hang
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -110,13 +124,18 @@ namespace SchoolCardReader
                 family = family.Substring(4);
                 family = ReverseString(family); //итоговое семейство, обрезано четыре символа с конца
                 int family_DEC = Convert.ToInt32(family, 16);
-                fam_textB.Text = family_DEC.ToString();
+                fam_textB.BeginInvoke((Action)delegate () { fam_textB.Text = family_DEC.ToString(); ; });
 
                 number = ReverseString(all_num);
                 number = number.Substring(0, number.Length - family.Length);
                 number = ReverseString(number); //итоговое семейство, обрезано четыре символа с конца
                 int number_DEC = Convert.ToInt32(number, 16);
-                num_textB.Text = number_DEC.ToString();
+                num_textB.BeginInvoke((Action)delegate () { num_textB.Text = number_DEC.ToString(); ; });
+
+                port.Close();
+                isConnected = false;
+                btn1.BeginInvoke((Action)delegate () { btn1.Text = "Старт"; ; });
+                label5.BeginInvoke((Action)delegate () { label5.Text = "Считывание остановлено"; ; });
             }
         }
 
@@ -138,6 +157,24 @@ namespace SchoolCardReader
             {
                 label5.ForeColor = Color.Red;
             }
+        }
+
+        private void CloseSerialOnExit()
+        {
+            try
+            {
+                port.Close(); //close the serial port
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message); //catch any serial port closing error messages
+            }
+            this.Invoke(new EventHandler(NowClose)); //now close back in the main thread
+        }
+
+        private void NowClose(object sender, EventArgs e)
+        {
+            this.Close(); //now close the form
         }
     }
 }
