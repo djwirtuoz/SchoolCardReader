@@ -117,7 +117,7 @@ namespace SchoolCardReader
 
         public void ConvertData()
         {
-            if (all_num != null && all_num != "")
+            if (all_num != null && all_num.Length > 0 && all_num != "\r")
             {
                 all_num = all_num.Trim();
                 family = ReverseString(all_num);
