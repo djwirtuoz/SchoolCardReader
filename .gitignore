@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SchoolCardReader/Form1.resx
+/SchoolCardReader/Form1.Designer.cs
+/SchoolCardReader/Form1.cs
