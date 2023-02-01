@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using System.Threading;
 using System.Drawing;
+using SchoolCardReader.Properties;
 
 namespace SchoolCardReader
 {
@@ -58,6 +59,8 @@ namespace SchoolCardReader
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.Size = new Size(300, 176);
+            pictureBox1.Image = Resources.idle_img;
             Search_dev();
         }
 
@@ -90,7 +93,7 @@ namespace SchoolCardReader
                         {
                             btn1.Enabled = true;
                             port_comboBox.SelectedItem = portnames[x];
-                            label5.Text = "Выберите порт";
+                            label5.Text = "Выбран порт " + portnames[x];
                         }
                     }
                 }
@@ -100,6 +103,10 @@ namespace SchoolCardReader
 
         private void btn1_Click(object sender, EventArgs e)
         {
+            fam_textB.Text = "";
+            num_textB.Text = "";
+            pictureBox1.Image = Resources.idle_img;
+
             try
             {
                 if (!isConnected)
@@ -130,6 +137,8 @@ namespace SchoolCardReader
 
                 if (command == "125")
                 {
+                    pictureBox1.Image = Resources.rfid_img;
+
                     all_num = all_num.Trim();
                     if (all_num.Length == 5) { all_num = "0" + all_num; }
                     if (all_num.Length == 4) { all_num = "00" + all_num; }
@@ -151,6 +160,8 @@ namespace SchoolCardReader
 
                 if(command == "135")
                 {
+                    pictureBox1.Image = Resources.nfc_img;
+
                     all_num = all_num.Substring(0, 8);
                     all_num = all_num.Trim();
 
@@ -211,6 +222,16 @@ namespace SchoolCardReader
         private void NowClose(object sender, EventArgs e)
         {
             this.Close(); //now close the form
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+            this.Size = new Size(475, 176);
+        }
+
+        private void sell_comport_Click(object sender, EventArgs e)
+        {
+            this.Size = new Size(300, 176);
         }
     }
 }

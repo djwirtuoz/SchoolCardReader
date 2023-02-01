@@ -38,6 +38,9 @@
             this.port_comboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.sell_comport = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btn1
@@ -85,7 +88,7 @@
             // port_comboBox
             // 
             this.port_comboBox.FormattingEnabled = true;
-            this.port_comboBox.Location = new System.Drawing.Point(239, 30);
+            this.port_comboBox.Location = new System.Drawing.Point(298, 30);
             this.port_comboBox.Name = "port_comboBox";
             this.port_comboBox.Size = new System.Drawing.Size(147, 21);
             this.port_comboBox.TabIndex = 7;
@@ -93,7 +96,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(236, 9);
+            this.label4.Location = new System.Drawing.Point(295, 9);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(32, 13);
             this.label4.TabIndex = 8;
@@ -101,18 +104,40 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(236, 71);
+            this.label5.Location = new System.Drawing.Point(12, 101);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(150, 23);
             this.label5.TabIndex = 9;
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label5.TextChanged += new System.EventHandler(this.label5_TextChanged);
+            this.label5.Click += new System.EventHandler(this.label5_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(177, 22);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(90, 90);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 10;
+            this.pictureBox1.TabStop = false;
+            // 
+            // sell_comport
+            // 
+            this.sell_comport.Location = new System.Drawing.Point(298, 71);
+            this.sell_comport.Name = "sell_comport";
+            this.sell_comport.Size = new System.Drawing.Size(147, 23);
+            this.sell_comport.TabIndex = 11;
+            this.sell_comport.Text = "Выбрать";
+            this.sell_comport.UseVisualStyleBackColor = true;
+            this.sell_comport.Click += new System.EventHandler(this.sell_comport_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(403, 113);
+            this.ClientSize = new System.Drawing.Size(459, 137);
+            this.Controls.Add(this.sell_comport);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.port_comboBox);
@@ -127,6 +152,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Считывание карт";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -142,6 +168,8 @@
         private System.Windows.Forms.ComboBox port_comboBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button sell_comport;
     }
 }
 
