@@ -17,8 +17,13 @@ namespace SchoolCardReader
         string all_num; //HEX all numm
         string family;  //family numm DEC
         string number;  //number numm DEC
+
+        int family_DEC;
+        int number_DEC;
+
         public Form1()
         {
+            TopMost = true;
             InitializeComponent();
 
             port.DataReceived += new SerialDataReceivedEventHandler(OnDataReceived);    //подключение события получения данных
@@ -103,28 +108,7 @@ namespace SchoolCardReader
 
         private void btn1_Click(object sender, EventArgs e)
         {
-            fam_textB.Text = "";
-            num_textB.Text = "";
-            pictureBox1.Image = Resources.idle_img;
-
-            try
-            {
-                if (!isConnected)
-                {
-                    isConnected = true;
-                    port.Open();
-                    btn1.Text = "Стоп";
-                    label5.Text = "Поднесите карту";
-                }
-                else
-                {
-                    isConnected = false;
-                    port.Close();
-                    btn1.Text = "Старт";
-                    label5.Text = "Считывание остановлено";
-                }
-            }
-            catch { label5.Text = "Порт недоступен"; }
+            restore_state();
         }
 
         public void ConvertData()
@@ -145,17 +129,20 @@ namespace SchoolCardReader
 
                     all_num = all_num.Substring(0, 6);
                     family = all_num.Substring(0, 2);
-                    int family_DEC = Convert.ToInt32(family, 16);
+                    family_DEC = Convert.ToInt32(family, 16);
                     fam_textB.BeginInvoke((Action)delegate () { fam_textB.Text = family_DEC.ToString(); ; });
 
                     number = all_num.Substring(2, 4);
-                    int number_DEC = Convert.ToInt32(number, 16);
+                    number_DEC = Convert.ToInt32(number, 16);
                     num_textB.BeginInvoke((Action)delegate () { num_textB.Text = number_DEC.ToString(); ; });
 
                     port.Close();
                     isConnected = false;
                     btn1.BeginInvoke((Action)delegate () { btn1.Text = "Старт"; ; });
                     label5.BeginInvoke((Action)delegate () { label5.Text = "Считывание остановлено"; ; });
+
+                    copy_to_clipboard();
+                    //restore_state();
                 }
 
                 if(command == "135")
@@ -189,6 +176,9 @@ namespace SchoolCardReader
                     isConnected = false;
                     btn1.BeginInvoke((Action)delegate () { btn1.Text = "Старт"; ; });
                     label5.BeginInvoke((Action)delegate () { label5.Text = "Считывание остановлено"; ; });
+
+                    copy_to_clipboard();
+                    //restore_state();
                 }
             }
         }
@@ -232,6 +222,43 @@ namespace SchoolCardReader
         private void sell_comport_Click(object sender, EventArgs e)
         {
             this.Size = new Size(300, 176);
+        }
+
+        private void restore_state()
+        {
+            fam_textB.Text = "";
+            num_textB.Text = "";
+            pictureBox1.Image = Resources.idle_img;
+
+            try
+            {
+                if (!isConnected)
+                {
+                    isConnected = true;
+                    port.Open();
+                    btn1.Text = "Стоп";
+                    label5.Text = "Поднесите карту";
+                }
+                else
+                {
+                    isConnected = false;
+                    port.Close();
+                    btn1.Text = "Старт";
+                    label5.Text = "Считывание остановлено";
+                }
+            }
+            catch { label5.Text = "Порт недоступен"; }
+        }
+        private void copy_to_clipboard()
+        {
+            string textData = family_DEC.ToString() + '\t' + number_DEC.ToString();
+            Thread thread = new Thread(() => Clipboard.SetText(textData));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+
+            SendKeys.SendWait("+{INSERT}");
+            SendKeys.SendWait("{DOWN}");
         }
     }
 }
