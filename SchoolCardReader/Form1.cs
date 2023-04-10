@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Drawing;
 using SchoolCardReader.Properties;
+using System.Linq;
 
 namespace SchoolCardReader
 {
@@ -115,6 +116,7 @@ namespace SchoolCardReader
         {
             if (command_pack != null && command_pack.Length > 0 && command_pack != "\r")
             {
+                command_pack = command_pack.Replace(" ", "");
                 string[] parts = command_pack.Split('-');
                 command = parts[0];
                 all_num = parts[1];
@@ -149,16 +151,17 @@ namespace SchoolCardReader
                 {
                     pictureBox1.Image = Resources.nfc_img;
 
-                    all_num = all_num.Substring(0, 8);
+                    all_num = all_num.Substring(0, 9);
                     all_num = all_num.Trim();
 
                     string[] hex_chanks = all_num.Split(',');
-                    Array.Reverse(hex_chanks);
+                    string[] reverse_hex_chunk = Enumerable.Reverse(hex_chanks).ToArray();
+                    //Array.Reverse(hex_chanks);
                     string numm = "";
 
-                    for (int i = 0; i < hex_chanks.Length; i++)
+                    for (int i = 0; i < reverse_hex_chunk.Length - 1; i++)
                     {
-                        numm += hex_chanks[i];
+                        numm += reverse_hex_chunk[i];
                     }
 
                     if (numm.Length == 5) { numm = "0" + numm; }

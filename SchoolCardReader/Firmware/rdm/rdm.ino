@@ -1,20 +1,21 @@
-  #include <Arduino.h>
-  #include <Wire.h>
-  #include <PN532_I2C.h>
-  #include <PN532.h>
-  #include <NfcAdapter.h>
-  #include <rdm6300.h>
+#include <Arduino.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <PN532_SPI.h>
+#include <PN532.h>
+#include <rdm6300.h>
 
-  PN532_I2C pn532i2c(Wire);
-  PN532 nfc(pn532i2c);
+PN532_SPI pn532spi(SPI, 10);
+PN532 nfc(pn532spi);
 
-  #define RDM6300_RX_PIN 4 // read the SoftwareSerial doc above! may need to change this pin to 10...
-  Rdm6300 rdm6300;
+#define RDM6300_RX_PIN 4 // read the SoftwareSerial doc above! may need to change this pin to 10...
+Rdm6300 rdm6300;
 
-  const int buttonPin = 2;
+const int buttonPin = 2;
 
-  bool mode; //выбирается считыватель, если true, то RDM 
-  int buttonState = 0;
+bool mode; //выбирается считыватель, если true, то RDM 
+int buttonState = 0;
+String hex_uuid = "";
   
 void setup() {
   Serial.begin(115200);
@@ -34,10 +35,13 @@ void setup() {
 
   mode = false;
 
-  pinMode(11, OUTPUT);
-  pinMode(12, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(6, OUTPUT);
   pinMode(3, INPUT);
 }
+
+
+void(* resetFunc) (void) = 0;//объявляем функцию reset с адресом 0
 
 void loop() {
 
@@ -54,42 +58,56 @@ void loop() {
   }
 }
 
+void rdm_void() {
+  while(true){
+    if(mode){
+      digitalWrite(7, HIGH);
+      digitalWrite(6, LOW);
 
-  void rdm_void() {
-    while(true){
-      if(mode){
-        digitalWrite(11, HIGH);
-        digitalWrite(12, LOW);
-
-      if (rdm6300.get_new_tag_id()){
-        Serial.print("125-");
-        Serial.println(rdm6300.get_tag_id(), HEX);
-      }
-      }
-      buttonState = digitalRead(buttonPin);
-      if(buttonState == HIGH){ break; mode = false; }
-    }  
-  }
+    if (rdm6300.get_new_tag_id()){
+      Serial.print("125-");
+      Serial.println(rdm6300.get_tag_id(), HEX);
+    }
+    }
+    buttonState = digitalRead(buttonPin);
+    if(buttonState == HIGH){ break; mode = false; }
+  }  
+}
 
 void pn_532(){
   if(!mode){
-    digitalWrite(12, HIGH);
-    digitalWrite(11, LOW);
+    while(true){
+    digitalWrite(6, HIGH);
+    digitalWrite(7, LOW);
 
     bool success;
-    uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
-    uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
-    
-    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
-    
-    if (success && uidLength > 1) {
-      Serial.print("135-");
-      for (uint8_t i = 0; i < uidLength; i++) 
-      {
-        Serial.print(uid[i], HEX); Serial.print(","); 
+    uint8_t responseLength = 32;
+    // set shield to inListPassiveTarget
+    success = nfc.inListPassiveTarget();
+
+      if(success) {
+                        
+        uint8_t selectApdu[] = { 0x00, /* CLA */
+                                  0xA4, /* INS */
+                                  0x04, /* P1  */
+                                  0x00, /* P2  */
+                                  0x05, /* Length of AID  */
+                                  0xF2, 0x22, 0x22, 0x22, 0x22 /* AID defined on Android App */
+                                };
+                                  
+        uint8_t response[3];  
+        
+        success = nfc.inDataExchange(selectApdu, sizeof(selectApdu), response, &responseLength);
+        
+        if(success) {
+          Serial.print("135-");
+          nfc.PrintHexCharNoProb(response, responseLength - 7);
+          Serial.println();
+          delay(1500);
+          resetFunc();
+        }
       }
-      Serial.println();
+      break;
     }
-    delay(300);
   }
 }
