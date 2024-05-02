@@ -83,6 +83,16 @@ namespace SchoolCardReader.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap nfs_smart {
+            get {
+                object obj = ResourceManager.GetObject("nfs_smart", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap rfid_img {
             get {
                 object obj = ResourceManager.GetObject("rfid_img", resourceCulture);

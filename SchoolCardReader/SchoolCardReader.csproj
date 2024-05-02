@@ -125,5 +125,11 @@
   <ItemGroup>
     <None Include="img\idle.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nfc_smart.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="img\nfs_smart.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

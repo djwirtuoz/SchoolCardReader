@@ -40,7 +40,13 @@ namespace SchoolCardReader
                     try
                     {
                         string message = port.ReadLine();
-                        command_pack = message;
+                        if(message.Length > 10)
+                        {
+                            message = message.Replace(" ", "");
+                            int _deleted_count = message.Length - 10;
+                            command_pack = message.Substring(0, message.Length - _deleted_count);
+                        }
+                        else { command_pack = message; }  
                     }
                     catch (TimeoutException) { }
                     finally
@@ -93,7 +99,7 @@ namespace SchoolCardReader
                         port_comboBox.SelectedItem = portnames[x];
                         selectedPort = port_comboBox.GetItemText(port_comboBox.SelectedItem);
                         port.PortName = selectedPort;
-                        port.BaudRate = 115200;
+                        port.BaudRate = 9600;
 
                         if (portnames[x] != null)
                         {
@@ -144,14 +150,13 @@ namespace SchoolCardReader
                     label5.BeginInvoke((Action)delegate () { label5.Text = "Считывание остановлено"; ; });
 
                     copy_to_clipboard();
-                    //restore_state();
                 }
 
                 if(command == "135")
                 {
                     pictureBox1.Image = Resources.nfc_img;
 
-                    all_num = all_num.Substring(0, 9);
+                    //all_num = all_num.Substring(0, 9);
                     all_num = all_num.Trim();
 
                     string[] hex_chanks = all_num.Split(',');
@@ -181,7 +186,36 @@ namespace SchoolCardReader
                     label5.BeginInvoke((Action)delegate () { label5.Text = "Считывание остановлено"; ; });
 
                     copy_to_clipboard();
-                    //restore_state();
+                }
+
+                if(command == "145")
+                {
+                    pictureBox1.Image = Resources.nfs_smart;
+
+                    // Реверс строки при считывании с телефона
+                    char[] charAllnum = all_num.ToCharArray();
+                    Array.Reverse(charAllnum);
+                    all_num = new string(charAllnum);
+
+                    all_num = all_num.Trim();
+                    if (all_num.Length == 5) { all_num = "0" + all_num; }
+                    if (all_num.Length == 4) { all_num = "00" + all_num; }
+
+                    all_num = all_num.Substring(0, 6);
+                    family = all_num.Substring(0, 2);
+                    family_DEC = Convert.ToInt32(family, 16);
+                    fam_textB.BeginInvoke((Action)delegate () { fam_textB.Text = family_DEC.ToString(); ; });
+
+                    number = all_num.Substring(2, 4);
+                    number_DEC = Convert.ToInt32(number, 16);
+                    num_textB.BeginInvoke((Action)delegate () { num_textB.Text = number_DEC.ToString(); ; });
+
+                    port.Close();
+                    isConnected = false;
+                    btn1.BeginInvoke((Action)delegate () { btn1.Text = "Старт"; ; });
+                    label5.BeginInvoke((Action)delegate () { label5.Text = "Считывание остановлено"; ; });
+
+                    copy_to_clipboard();
                 }
             }
         }
